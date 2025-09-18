@@ -37,6 +37,7 @@ public class SecurityConfig {
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/login/**", "/css/**", "/js/**").permitAll()
+                .antMatchers("/main/accommodation/**").permitAll()  // YEYE 임시로 접근 허용
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
