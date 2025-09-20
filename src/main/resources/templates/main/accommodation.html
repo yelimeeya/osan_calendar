@@ -3,17 +3,14 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/base}">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>숙소 예약 관리</title>
+</head>
+<body>
+<div layout:fragment="content" class="container-fluid h-100">
+    <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
     <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css" />
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-        }
 
+    <style>
         #grid {
             width: 100%;
             height: 100%;
@@ -39,26 +36,9 @@
             flex: 1;
             min-height: 0;
         }
-
     </style>
-</head>
-<body>
-    <div layout:fragment="content" class="container-fluid h-100">
-        <div class="card h-100">
-            <div class="card-header">
-                <h4 class="mb-0">숙소 예약 현황</h4>
-            </div>
-            <div class="card-body">
-                <div id="currentMonth" class="mb-3 text-center fw-bold fs-5"></div>
-                <div class="grid-container">
-                    <div id="grid"></div>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
-    <script>
+    <script th:inline="javascript">
         document.addEventListener('DOMContentLoaded', function() {
             const gridElement = document.getElementById('grid');
 
@@ -98,16 +78,12 @@
                 );
             }
 
-            const dataSource = {
-                api: {
-                    readData: { url: '/api/accommodation/data', method: 'GET' }
-                }
-            };
+            const data = /*[(${accommodationData})]*/ '[]';
 
             // 그리드 초기화
             const grid = new tui.Grid({
                 el: gridElement,
-                data: dataSource,
+                data: data,
                 scrollX: true,
                 scrollY: true,
                 bodyHeight: 'auto',
@@ -118,8 +94,23 @@
             // 현재 월 표시
             const now = new Date();
             document.getElementById('currentMonth').textContent =  `${now.getFullYear()}년 ${now.getMonth() + 1}월`;
-
         });
     </script>
+    <div class="card h-100">
+        <div class="card-header">
+            <h4 class="mb-0">숙소 예약 현황</h4>
+        </div>
+        <div class="card-body">
+            <div id="currentMonth" class="mb-3 text-center fw-bold fs-5"></div>
+            <div class="grid-container">
+                <div id="grid"></div>
+                <div id="data-container"
+                     th:data-accommodation="${accommodationData}">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>
