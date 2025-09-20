@@ -62,28 +62,6 @@
         document.addEventListener('DOMContentLoaded', function() {
             const gridElement = document.getElementById('grid');
 
-            // 그리드 데이터
-            const data = [
-                {
-                    id: 1,
-                    reservation: 'V',
-                    company: '경력사원 입문과정',
-                    course: '경력사원 입문과정',
-                    type: '기본역량',
-                    actualCount: 90,
-                    totalCount: 90,
-                    // 1일부터 31일까지의 방 타입별 인원
-                    ...Array.from({length: 31}, (_, i) => {
-                        const day = i + 1;
-                        return {
-                            [`day${day}Single`]: Math.floor(Math.random() * 5), // 1인실
-                            [`day${day}Double`]: Math.floor(Math.random() * 3), // 2인실
-                            [`day${day}Special`]: Math.floor(Math.random() * 2)  // 특화
-                        };
-                    }).reduce((acc, curr) => ({...acc, ...curr}), {})
-                },
-            ];
-
             const columns = [
                 { header: '가예약', name: 'reservation', width: 60, align: 'center' },
                 { header: '회사명', name: 'company', width: 150, sortable: true },
@@ -120,10 +98,16 @@
                 );
             }
 
+            const dataSource = {
+                api: {
+                    readData: { url: '/api/accommodation/data', method: 'GET' }
+                }
+            };
+
             // 그리드 초기화
             const grid = new tui.Grid({
                 el: gridElement,
-                data: data,
+                data: dataSource,
                 scrollX: true,
                 scrollY: true,
                 bodyHeight: 'auto',
@@ -134,6 +118,7 @@
             // 현재 월 표시
             const now = new Date();
             document.getElementById('currentMonth').textContent =  `${now.getFullYear()}년 ${now.getMonth() + 1}월`;
+
         });
     </script>
 </body>
