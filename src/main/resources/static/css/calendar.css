@@ -39,3 +39,10 @@
    display: none;
   }
 }
+
+.toastui-calendar-popup-section.toastui-calendar-section-button {
+  display: none;
+}
+.toastui-calendar-popup-arrow-border{
+    display: none;
+}
