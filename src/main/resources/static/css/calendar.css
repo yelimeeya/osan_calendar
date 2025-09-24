@@ -1,0 +1,41 @@
+@media screen and (min-width: 600px) {
+  .attendees {
+    position: absolute;
+    left: 50%;
+    top: 15.5px; /* 31px의 중앙 */
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+    z-index: 1;
+    font-size: small;
+  }
+}
+@media screen and (max-width: 600px) {
+  .attendees {
+    display: none;
+  }
+}
+
+@media screen and (min-width: 1750px) {
+  .cell-info {
+    position: absolute;
+    top: 1px;
+    left: 0px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 2열 */
+    grid-template-rows: repeat(2, auto);   /* 4행 */
+    gap: 0px; /* 셀 사이 간격 */
+  }
+  .cell-info span {
+    width: 4vw;
+    margin: 1px 1px;
+    padding: 2px 2px;
+    text-align: center;
+    font-size: 0.8rem;
+    font-weight: bold;
+  }
+}
+@media screen and (max-width: 1750px) {
+  .cell-info {
+   display: none;
+  }
+}

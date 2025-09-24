@@ -6,14 +6,172 @@
     <title>강의 페이지</title>
 </head>
 <body>
-<div layout:fragment="content">
-    <div>
-        이건 머리고
-        <p>태그먹나 테스트</p>
+<main layout:fragment="content">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <link rel="stylesheet" href="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.css" />
+        <script src="https://uicdn.toast.com/calendar/latest/toastui-calendar.ie11.min.js"></script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.3/moment.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/chance/1.1.8/chance.min.js"></script>
+
+        <!--<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>-->
+
+        <script th:src="@{/js/mock-data.js}"></script>
+        <script th:src="@{/js/utils.js}"></script>
+
+        <link th:href="@{/css/reset.css}" rel="stylesheet" />
+        <link th:href="@{/css/app.css}" rel="stylesheet" />
+        <link th:href="@{/css/icons.css}" rel="stylesheet" />
+        <link th:href="@{/css/calendar.css}" rel="stylesheet" />
+    </head>
+    <div style="height: 100%;">
+        <div class="app-container code-html">
+            <header class="header">
+                <nav class="navbar">
+                    <span class="cell-info">
+                          <span style="background-color:#F4F5EF;">기본역량셀</span>
+                          <span style="background-color:#EBE4F7;">핵심인재셀</span>
+                          <span style="background-color:#C6EAFF;">전문역량셀</span>
+                          <span style="background-color:#EEF3DC;">PA셀</span>
+                          <span style="background-color:#FFCEA1;">그룹사</span>
+                          <span style="background-color:#FDBCE8;">지주</span>
+                          <span style="background-color:#FFFF9F;">HRD기획셀</span>
+                          <span style="background-color:#F0F0F0;">기타</span>
+                    </span>
+                    <span></span>
+                    <button class="button is-rounded prev">
+                        <img th:src="@{/images/ic-arrow-line-left.png}" th:srcset="@{/images/ic-arrow-line-left@2x.png} + ' 2x, ' + @{/images/ic-arrow-line-left@3x.png} + ' 3x'" alt="왼쪽 화살표">
+                    </button>
+                    <span class="navbar--range"></span>
+                    <button class="button is-rounded next">
+                        <img th:src="@{/images/ic-arrow-line-right.png}" th:srcset="@{/images/ic-arrow-line-right@2x.png} + ' 2x, ' + @{/images/ic-arrow-line-right@3x.png} + ' 3x'" alt="오른쪽 화살표">
+                    </button>
+                    <span></span>
+                </nav>
+            </header>
+            <main id="app"></main>
+        </div>
+
+        <script type="text/javascript" class="code-js">
+            var prevButton = $('.prev');
+            var nextButton = $('.next');
+            var range = $('.navbar--range');
+
+            var Calendar = window.tui.Calendar;
+
+            var cal = new Calendar('#app', {
+                usageStatistics: false,
+                defaultView: 'month',
+                calendars: MOCK_CALENDARS,
+                gridSelection: {
+                    enableDblClick: false,
+                    enableClick: false,
+                },
+                useDetailPopup: true,
+                isReadOnly: true,
+            });
+            cal.setOptions({
+                month: {
+                    dayNames: ['일', '월', '화', '수', '목', '금', '토'],
+                    isAlways6Weeks: false,
+                },
+            });
+            cal.setCalendars([
+                {
+                    id: 'cal',
+                    enableDrag: false,
+                }
+            ]);
+            cal.setTheme({
+                common: {
+                    saturday: {
+                        color: 'rgba(64, 64, 255, 0.5)',
+                    },
+                    today: {
+                        color: 'blue',
+                    },
+                },
+            });
+
+            function displayRenderRange() {
+                range.textContent = getNavbarRange(cal.getDateRangeStart(), cal.getDateRangeEnd(), 'month');
+            }
+
+            function loadEvents() {
+                const dateRangeStart = cal.getDateRangeStart();
+                const dateRangeEnd = cal.getDateRangeEnd();
+                fetch(`/main/calendar/events?dateRangeStart=${dateRangeStart}&dateRangeEnd=${dateRangeEnd}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                        const lectures = data.lectures.map(item => ({
+                            id: item.id,
+                            calendarId: item.calendarId,
+                            title: '[' + item.reservedCell + '] ' + item.title + ' (' + item.attendees + '명)',
+                            start: item.start,
+                            end: item.end,
+                            isAllday: item.isAllday,
+                            category: item.category,
+                            state: item.reservedCell,
+                            attendees: [item.attendees + '명'],
+                            title2: item.title,
+                            backgroundColor: item.backgroundColor
+                        }));
+                        cal.createEvents(lectures);
+                        cal.setOptions({
+                            template: {
+                                monthGridHeader(model) {
+                                    const date = parseInt(model.date.split('-')[2], 10);
+                                    var attendeeCount = "";
+                                    data.attendeeCounts.forEach(item => {
+                                        if(model.date == item.date){
+                                            console.log(item.data);
+                                            attendeeCount = item.attendeeCount + '명';
+                                        }
+                                    });
+                                    return `<span>${date}</span><span class="attendees">${attendeeCount}</span>`;
+                                },
+                                popupDetailTitle({title}) {
+                                    data.lectures.forEach(item => {
+                                        if(title == '[' + item.reservedCell + '] ' + item.title + ' (' + item.attendees + '명)'){
+                                            title = item.title;
+                                        }
+                                    });
+                                    return title;
+                                },
+                            },
+
+                        });
+
+                    })
+                    .catch(err => {
+                    console.log("에러맨");
+                });
+            }
+
+            prevButton.addEventListener('click', function () {
+                cal.prev();
+                cal.clear();
+                loadEvents();
+                displayRenderRange();
+            });
+
+            nextButton.addEventListener('click', function () {
+                cal.next();
+                cal.clear();
+                loadEvents();
+                displayRenderRange();
+            });
+
+            document.addEventListener('DOMContentLoaded', function() {
+                loadEvents();
+                displayRenderRange();
+            });
+        </script>
     </div>
-    <div>
-        이건 바디고
-    </div>
-</div>
+</main>
 </body>
 </html>

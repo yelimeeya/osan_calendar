@@ -11248,3 +11248,10 @@ body {
   font-size: 0.75rem;
   border-radius: 0.375rem !important;
 }
+
+.toastui-calendar-popup-section.toastui-calendar-section-button {
+  display: none;
+}
+.toastui-calendar-popup-arrow-border{
+    display: none;
+}
