@@ -1,0 +1,24 @@
+[
+  {
+    "id": 1,
+    "reservation": "V",
+    "company": "셀11",
+    "course": "경력사원 입문과정",
+    "type": "",
+    "actualCount": 90,
+    "totalCount": 180,
+    "day1Single": 2, "day1Double": 1, "day1Special": 0,
+  },
+  {
+    "id": 2,
+    "reservation": "",
+    "company": "셀22",
+    "course": "디자인씽킹 과정 3차수",
+    "type": "",
+    "actualCount": 50,
+    "totalCount": 100,
+    "day1Single": 1, "day1Double": 0, "day1Special": 1,
+    "day2Single": 2, "day2Double": 1, "day2Special": 0,
+    "day3Single": 1, "day3Double": 1, "day3Special": 0
+  }
+]
